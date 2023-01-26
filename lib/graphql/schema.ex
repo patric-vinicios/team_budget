@@ -35,6 +35,14 @@ defmodule Graphql.Schema do
       middleware(&build_payload/2)
     end
 
+    @desc "Send an invite"
+    field :send_invite, list_of(:string) do
+      arg(:invites, non_null(list_of(:string)))
+      middleware(Middleware.Authorize, :user)
+      middleware(Middleware.SetAteam)
+      resolve(&Resolvers.Invite.send_invite/2)
+    end
+
     @desc "Login with an user account"
     field :login, :login_payload do
       arg(:user, non_null(:login_input))
@@ -47,9 +55,9 @@ defmodule Graphql.Schema do
     loader =
       Dataloader.new()
       |> Dataloader.add_source(Team, Team.data())
-      Map.put(context, :loader, loader)
+
+    Map.put(context, :loader, loader)
   end
 
   def plugins, do: [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
-
 end
