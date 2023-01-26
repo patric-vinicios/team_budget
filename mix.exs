@@ -51,7 +51,9 @@ defmodule TeamBudget.MixProject do
       {:absinthe_phoenix, "~> 2.0.0"},
       {:absinthe_error_payload, "~> 1.0"},
       {:guardian, "~> 2.0"},
-      {:argon2_elixir, "~> 3.0"}
+      {:argon2_elixir, "~> 3.0"},
+      {:slugify, "~> 1.3"},
+      {:dataloader, "~> 1.0.0"}
     ]
   end
 

@@ -3,6 +3,7 @@ defmodule Graphql.Schema do
 
   alias Graphql.Resolvers
   alias Graphql.Middlewares
+  alias TeamBudget.Teams.Data.Team
 
   import_types(Graphql.Types)
 
@@ -17,6 +18,12 @@ defmodule Graphql.Schema do
     field :list_users, list_of(:user) do
       middleware(Middlewares.Authorize, :user)
       resolve(&Resolvers.User.list_users/3)
+    end
+
+    @desc "Get list of all teams from an user"
+    field :list_teams, list_of(:team) do
+      middleware(Middlewares.Authorize, :user)
+      resolve(&Resolvers.Team.list_teams/3)
     end
   end
 
@@ -35,4 +42,14 @@ defmodule Graphql.Schema do
       middleware(&build_payload/2)
     end
   end
+
+  def context(context) do
+    loader =
+      Dataloader.new()
+      |> Dataloader.add_source(Team, Team.data())
+      Map.put(context, :loader, loader)
+  end
+
+  def plugins, do: [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
+
 end
